@@ -10,6 +10,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Data resolver for {@link FakeHelloDataSource}
+ *
+ * @author federico.herrera
+ */
 @DgsComponent
 @Slf4j
 @AllArgsConstructor
