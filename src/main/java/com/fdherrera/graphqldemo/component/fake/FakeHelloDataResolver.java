@@ -1,7 +1,7 @@
 package com.fdherrera.graphqldemo.component.fake;
 
 import com.fdherrera.graphqldemo.datasource.fake.FakeHelloDataSource;
-import com.fdherrera.graphqldemogenerated.types.Hello;
+import com.fdherrera.graphqldemo.generated.types.Hello;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsQuery;
 

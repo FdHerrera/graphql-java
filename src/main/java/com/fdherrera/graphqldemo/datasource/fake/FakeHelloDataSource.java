@@ -1,12 +1,13 @@
 package com.fdherrera.graphqldemo.datasource.fake;
 
-import com.fdherrera.graphqldemogenerated.types.Hello;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
+
+import com.fdherrera.graphqldemo.generated.types.Hello;
 
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;

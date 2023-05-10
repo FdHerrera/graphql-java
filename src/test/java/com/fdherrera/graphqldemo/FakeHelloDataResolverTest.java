@@ -1,6 +1,6 @@
 package com.fdherrera.graphqldemo;
 
-import com.fdherrera.graphqldemogenerated.types.Hello;
+import com.fdherrera.graphqldemo.generated.types.Hello;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
