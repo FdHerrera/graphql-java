@@ -1,4 +1,4 @@
-# Project Name: GraphQL Backend with Java Spring Boot and Netflix DGS
+# GraphQL Backend with Java Spring Boot and Netflix DGS
 
 ## Description
 This project serves as a learning exercise to practice implementing a GraphQL backend using Java, Spring Boot, and Netflix DGS. The project is based on the course "Learn how to use Java Spring Boot 3 + Netflix DGS to build GraphQL backend: read, modify, and subscribe for data change" on Udemy, instructed by Timotius Pamungkas.
