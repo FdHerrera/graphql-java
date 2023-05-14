@@ -36,4 +36,5 @@ tasks.named('test') {
 
 generateJava {
         packageName = 'com.fdherrera.graphqldemo.generated'
+        generateClient = true
 }
