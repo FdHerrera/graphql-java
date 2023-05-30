@@ -14,6 +14,7 @@ import static com.fdherrera.graphqldemo.generated.DgsConstants.QUERY_TYPE;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @DgsComponent
@@ -25,6 +26,9 @@ public class FakeMobileAppDataResolver {
     public List<MobileApp> getMobileApps(DataFetchingEnvironment dataFetchingEnvironment) {
         Map<String, Object> args = dataFetchingEnvironment.getArguments();
         log.info(args.toString());
+        if (Objects.isNull(args.get(QUERY.MOBILEAPPS_INPUT_ARGUMENT.MobileAppFilter))) {
+            return dataSource.getMobileApps();
+        }
         return null;
     }
 }

@@ -35,7 +35,7 @@ class FakeHelloDataResolverTest {
     }
 
     @Test
-    void shouldExecuteAndReturnNonNullValuesOnAllHellos() {
+    public void shouldExecuteAndReturnNonNullValuesOnAllHellos() {
         String query = """
         {
             allHellos {

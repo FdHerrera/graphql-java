@@ -1,8 +1,11 @@
 package com.fdherrera.graphqldemo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.fdherrera.graphqldemo.generated.client.MobileAppsGraphQLQuery;
 import com.fdherrera.graphqldemo.generated.client.MobileAppsProjectionRoot;
-import com.fdherrera.graphqldemo.generated.types.AuthorFilter;
+import com.fdherrera.graphqldemo.generated.types.MobileApp;
 import com.fdherrera.graphqldemo.generated.types.MobileAppFilter;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
@@ -15,10 +18,8 @@ class FakeMobileAppDataResolverTest {
     @Autowired private DgsQueryExecutor queryExecutor;
 
     @Test
-    void should() {
-        AuthorFilter authorFilter = null;
-        MobileAppFilter inputFilter =
-            MobileAppFilter.newBuilder().name("App").version("Version").author(null).build();
+    void shouldReturnAllMobileAppsWhenInputIsNull() {
+        MobileAppFilter inputFilter = null;
         MobileAppsGraphQLQuery inputQuery =
             MobileAppsGraphQLQuery.newRequest().mobileAppFilter(inputFilter).build();
         MobileAppsProjectionRoot projection = new MobileAppsProjectionRoot()
@@ -34,18 +35,10 @@ class FakeMobileAppDataResolverTest {
                                                   .root();
         String graphqlRequest = new GraphQLQueryRequest(inputQuery, projection).serialize();
 
-        // queryExecutor.execute(graphqlRequest);
-        queryExecutor.execute("""
-            {
-                    mobileApps(mobileAppFilter: {
-                        name: "App" 
-                        version: "Version" 
-                        author : null
-                    }) {
-                        name
-                    }
-                }
-            """
-        );
+        MobileApp[] actualMobileApps = queryExecutor.executeAndExtractJsonPathAsObject(
+            graphqlRequest, "data.mobileApps", MobileApp[].class);
+
+        assertNotNull(actualMobileApps);
+        assertEquals(20, actualMobileApps.length);
     }
 }

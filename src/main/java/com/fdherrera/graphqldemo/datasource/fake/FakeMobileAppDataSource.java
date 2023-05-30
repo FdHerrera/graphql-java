@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FakeMobileAppDataSource extends CommonFakeSource {
+
+    private static final List<String> OS = List.of("Windows", "IOs", "Ubuntu", "CentOS", "Fedora", "Debian", "Mint");
+
     public FakeMobileAppDataSource(Faker faker) {
         super(faker);
     }
@@ -39,17 +42,9 @@ public class FakeMobileAppDataSource extends CommonFakeSource {
     }
 
     private List<String> getPlatforms() {
+        
         return IntStream.range(0, 3)
-            .mapToObj(i -> {
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    return List.of("Windows", "IOs", "Ubuntu", "CentOS", "Fedora", "Debian", "Mint")
-                        .stream()
-                        .findAny()
-                        .orElse(null);
-                } else {
-                    return null;
-                }
-            })
+            .mapToObj(i -> OS.get(ThreadLocalRandom.current().nextInt(0, OS.size())))
             .filter(s -> !Objects.isNull(s))
             .collect(toSet())
             .stream()
