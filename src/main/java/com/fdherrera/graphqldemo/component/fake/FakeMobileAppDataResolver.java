@@ -1,34 +1,29 @@
 package com.fdherrera.graphqldemo.component.fake;
 
-import com.fdherrera.graphqldemo.datasource.fake.FakeMobileAppDataSource;
-import com.fdherrera.graphqldemo.generated.DgsConstants.QUERY;
-import com.fdherrera.graphqldemo.generated.types.MobileApp;
-import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsData;
-
-import graphql.schema.DataFetchingEnvironment;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import static com.fdherrera.graphqldemo.generated.DgsConstants.QUERY_TYPE;
 
+import com.fdherrera.graphqldemo.generated.DgsConstants.QUERY;
+import com.fdherrera.graphqldemo.generated.types.MobileApp;
+import com.fdherrera.graphqldemo.generated.types.MobileAppFilter;
+import com.fdherrera.graphqldemo.service.MobileAppService;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsData;
+import com.netflix.graphql.dgs.InputArgument;
+import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-@Slf4j
+
+import lombok.AllArgsConstructor;
+
 @DgsComponent
 @AllArgsConstructor
 public class FakeMobileAppDataResolver {
-    private final FakeMobileAppDataSource dataSource;
+    private final MobileAppService mobileAppService;
 
     @DgsData(parentType = QUERY_TYPE, field = QUERY.MobileApps)
-    public List<MobileApp> getMobileApps(DataFetchingEnvironment dataFetchingEnvironment) {
-        Map<String, Object> args = dataFetchingEnvironment.getArguments();
-        log.info(args.toString());
-        if (Objects.isNull(args.get(QUERY.MOBILEAPPS_INPUT_ARGUMENT.MobileAppFilter))) {
-            return dataSource.getMobileApps();
-        }
-        return null;
+    public List<MobileApp> getMobileApps(
+        @InputArgument(name = QUERY.MOBILEAPPS_INPUT_ARGUMENT.MobileAppFilter)
+        MobileAppFilter filter, DataFetchingEnvironment dataFetchingEnvironment) {
+        return mobileAppService.getMobileApps(filter);
     }
 }
