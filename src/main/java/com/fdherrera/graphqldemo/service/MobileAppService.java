@@ -35,6 +35,7 @@ public class MobileAppService {
                 -> containsIgnoreCase(mobileApp.getVersion(),
                     Optional.ofNullable(filter.getVersion()).orElse(Strings.EMPTY)))
             .filter(mobileApp -> matchAuthor(mobileApp, filter.getAuthor()))
+            .filter(mobileApp -> matchPlatform(mobileApp, filter.getPlatform()))
             .toList();
     }
 
@@ -44,5 +45,12 @@ public class MobileAppService {
         }
         return containsIgnoreCase(mobileApp.getAuthor().getName(),
             Optional.ofNullable(authorFilter.getName()).orElse(Strings.EMPTY));
+    }
+
+    private boolean matchPlatform(MobileApp mobileApp, String platformFilter) {
+        if (Objects.isNull(platformFilter)) {
+            return true;
+        }
+        return mobileApp.getPlatform().contains(platformFilter);
     }
 }

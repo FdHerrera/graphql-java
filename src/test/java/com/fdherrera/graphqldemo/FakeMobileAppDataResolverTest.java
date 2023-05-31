@@ -112,4 +112,27 @@ class FakeMobileAppDataResolverTest {
             .forEach(mobileApp
                 -> assertEquals(mobileApp.getAuthor().getName(), someMobileAppInDatabase.getAuthor().getName()));
     }
+
+    @Test
+    void shouldReturnAtLeastOneMobileAppWhenPlatformOfAMobileAppIsInDataSource() {
+        MobileApp someMobileAppInDatabase =
+            dataSource.getMobileApps().stream().findAny().orElseThrow();
+        String platformInDatabase = someMobileAppInDatabase.getPlatform().stream().findAny().orElse("Windows");
+        MobileAppFilter inputFilter =
+            MobileAppFilter.newBuilder()
+                .platform(platformInDatabase)
+                .build();
+        MobileAppsGraphQLQuery inputQuery = MobileAppsGraphQLQuery.newRequest().mobileAppFilter(inputFilter).build();
+        MobileAppsProjectionRoot projection = new MobileAppsProjectionRoot().platform().name();
+        String graphqlRequest = new GraphQLQueryRequest(inputQuery, projection).serialize();
+
+        MobileApp[] actualMobileApps = queryExecutor.executeAndExtractJsonPathAsObject(
+            graphqlRequest, "data.mobileApps", MobileApp[].class);
+
+        assertNotNull(actualMobileApps);
+        assertTrue(actualMobileApps.length >= 1);
+        Arrays.asList(actualMobileApps)
+            .forEach(mobileApp
+                -> assertTrue(mobileApp.getPlatform().contains(platformInDatabase)));
+    }
 }
