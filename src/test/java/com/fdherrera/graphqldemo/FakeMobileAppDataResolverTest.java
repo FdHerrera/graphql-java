@@ -13,6 +13,9 @@ import com.fdherrera.graphqldemo.generated.types.MobileAppFilter;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -134,5 +137,69 @@ class FakeMobileAppDataResolverTest {
         Arrays.asList(actualMobileApps)
             .forEach(mobileApp
                 -> assertTrue(mobileApp.getPlatform().contains(platformInDatabase)));
+    }
+
+    @Test
+    void shouldReturnAtLeastOneMobileAppPerFilterPropertyWhenAMobileAppMatch() {
+        List<MobileApp> mobileAppsInDB = dataSource.getMobileApps();
+        String aNameOfAMobileAppInDB = mobileAppsInDB.get(0).getName();
+        String aVersionOfAMobileAppInDB = mobileAppsInDB.get(0).getVersion();
+        String aPlatformOfAMobileAppInDB = mobileAppsInDB.get(0).getPlatform().get(0);
+
+        MobileAppFilter inputFilter =
+            MobileAppFilter.newBuilder()
+                .name(aNameOfAMobileAppInDB)
+                .version(aVersionOfAMobileAppInDB)
+                .platform(aPlatformOfAMobileAppInDB)
+                .build();
+        MobileAppsGraphQLQuery inputQuery = MobileAppsGraphQLQuery.newRequest().mobileAppFilter(inputFilter).build();
+        MobileAppsProjectionRoot projection = new MobileAppsProjectionRoot().platform().name().version().platform();
+        String graphqlRequest = new GraphQLQueryRequest(inputQuery, projection).serialize();
+
+        MobileApp[] actualMobileApps = queryExecutor.executeAndExtractJsonPathAsObject(
+            graphqlRequest, "data.mobileApps", MobileApp[].class);
+
+        List<MobileApp> actualMobileAppsList = List.of(actualMobileApps);
+        assertNotNull(actualMobileApps);
+        assertTrue(actualMobileApps.length >= 3);
+        assertAtLeastOneAppMatchesName(aNameOfAMobileAppInDB, actualMobileAppsList);
+        assertAtLeastOneAppMatchesAnyOfCriteria(aNameOfAMobileAppInDB, aVersionOfAMobileAppInDB, aPlatformOfAMobileAppInDB, actualMobileAppsList);
+    }
+
+    private void assertAtLeastOneAppMatchesAnyOfCriteria(String aNameOfAMobileAppInDB, String aVersionOfAMobileAppInDB,
+            String aPlatformOfAMobileAppInDB, List<MobileApp> actualMobileAppsList) {
+        boolean responseContainsAMobileAppWithSameName = false;
+        boolean responseContainsAMobileAppWithSameVersion = false;
+        boolean responseContainsAMobileAppWithPlatform = false;
+
+        for (MobileApp anActualMobileApp: actualMobileAppsList) {
+            if (StringUtils.containsIgnoreCase(anActualMobileApp.getName(), aNameOfAMobileAppInDB)) {
+                responseContainsAMobileAppWithSameName = true;
+            }
+
+            if (StringUtils.containsIgnoreCase(anActualMobileApp.getVersion(), aVersionOfAMobileAppInDB)) {
+                responseContainsAMobileAppWithSameVersion = true;
+            }
+
+            for (String platform: anActualMobileApp.getPlatform()) {
+                if (StringUtils.containsIgnoreCase(platform, aPlatformOfAMobileAppInDB)) {
+                    responseContainsAMobileAppWithPlatform = true;
+                }
+            }
+        }
+        assertTrue(responseContainsAMobileAppWithSameName);
+        assertTrue(responseContainsAMobileAppWithSameVersion);
+        assertTrue(responseContainsAMobileAppWithPlatform);
+    }
+
+    private void assertAtLeastOneAppMatchesName(String aNameOfAMobileAppInDB, List<MobileApp> actualMobileAppsList) {
+        boolean responseContainsAMobileAppWithSameName = false;
+        for (MobileApp anActualMobileApp: actualMobileAppsList) {
+            if (anActualMobileApp.getName().equals(aNameOfAMobileAppInDB)) {
+                responseContainsAMobileAppWithSameName = true;
+                break;
+            }
+        }
+        assertTrue(responseContainsAMobileAppWithSameName);
     }
 }

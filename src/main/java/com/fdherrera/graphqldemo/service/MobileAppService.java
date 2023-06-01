@@ -8,10 +8,8 @@ import com.fdherrera.graphqldemo.generated.types.MobileApp;
 import com.fdherrera.graphqldemo.generated.types.MobileAppFilter;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,29 +26,34 @@ public class MobileAppService {
             return mobileApps;
         }
         return mobileApps.stream()
-            .filter(mobileApp
-                -> containsIgnoreCase(mobileApp.getName(),
-                    Optional.ofNullable(filter.getName()).orElse(Strings.EMPTY)))
-            .filter(mobileApp
-                -> containsIgnoreCase(mobileApp.getVersion(),
-                    Optional.ofNullable(filter.getVersion()).orElse(Strings.EMPTY)))
-            .filter(mobileApp -> matchAuthor(mobileApp, filter.getAuthor()))
-            .filter(mobileApp -> matchPlatform(mobileApp, filter.getPlatform()))
+            .filter(mobileApp -> filterMobileApp(filter, mobileApp))
             .toList();
     }
 
-    private boolean matchAuthor(MobileApp mobileApp, AuthorFilter authorFilter) {
-        if (Objects.isNull(authorFilter)) {
-            return true;
+    private boolean filterMobileApp(MobileAppFilter filter, MobileApp mobileApp) {
+        if (!Objects.isNull(filter.getName())) {
+            if (containsIgnoreCase(mobileApp.getName(), filter.getName())) {
+                return true;
+            }
         }
-        return containsIgnoreCase(mobileApp.getAuthor().getName(),
-            Optional.ofNullable(authorFilter.getName()).orElse(Strings.EMPTY));
-    }
 
-    private boolean matchPlatform(MobileApp mobileApp, String platformFilter) {
-        if (Objects.isNull(platformFilter)) {
-            return true;
+        if (!Objects.isNull(filter.getVersion())) {
+            if (containsIgnoreCase(mobileApp.getVersion(), filter.getVersion())) {
+                return true;
+            }
         }
-        return mobileApp.getPlatform().contains(platformFilter);
+
+        if (!Objects.isNull(filter.getAuthor())) {
+            if (containsIgnoreCase(mobileApp.getAuthor().getName(), filter.getAuthor().getName())) {
+                return true;
+            }
+        }
+
+        if (!Objects.isNull(filter.getPlatform())) {
+            if (mobileApp.getPlatform().contains(filter.getPlatform())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
