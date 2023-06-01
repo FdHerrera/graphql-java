@@ -3,7 +3,6 @@ package com.fdherrera.graphqldemo.service;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import com.fdherrera.graphqldemo.datasource.fake.FakeMobileAppDataSource;
-import com.fdherrera.graphqldemo.generated.types.AuthorFilter;
 import com.fdherrera.graphqldemo.generated.types.MobileApp;
 import com.fdherrera.graphqldemo.generated.types.MobileAppFilter;
 import java.util.List;
@@ -25,9 +24,7 @@ public class MobileAppService {
             log.info("Getting all mobile apps since filter is null");
             return mobileApps;
         }
-        return mobileApps.stream()
-            .filter(mobileApp -> filterMobileApp(filter, mobileApp))
-            .toList();
+        return mobileApps.stream().filter(mobileApp -> filterMobileApp(filter, mobileApp)).toList();
     }
 
     private boolean filterMobileApp(MobileAppFilter filter, MobileApp mobileApp) {
