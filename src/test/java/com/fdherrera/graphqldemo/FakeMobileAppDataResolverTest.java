@@ -140,6 +140,27 @@ class FakeMobileAppDataResolverTest {
     }
 
     @Test
+    void shouldReturnAtLeastOneMobileAppWhenTotalDownloadsIsInDataSource() {
+        MobileApp someMobileAppInDatabase =
+            dataSource.getMobileApps().stream().findAny().orElseThrow();
+        Integer totalDownloadsInDB = someMobileAppInDatabase.getTotalDownloads();
+        MobileAppFilter inputFilter =
+            MobileAppFilter.newBuilder().minimumDownloads(totalDownloadsInDB).build();
+        MobileAppsGraphQLQuery inputQuery =
+            MobileAppsGraphQLQuery.newRequest().mobileAppFilter(inputFilter).build();
+        MobileAppsProjectionRoot projection = new MobileAppsProjectionRoot().totalDownloads();
+        String graphqlRequest = new GraphQLQueryRequest(inputQuery, projection).serialize();
+
+        MobileApp[] actualMobileApps = queryExecutor.executeAndExtractJsonPathAsObject(
+            graphqlRequest, "data.mobileApps", MobileApp[].class);
+
+        assertNotNull(actualMobileApps);
+        assertTrue(actualMobileApps.length >= 1);
+        Arrays.asList(actualMobileApps)
+            .forEach(mobileApp -> assertTrue(mobileApp.getTotalDownloads() >= totalDownloadsInDB));
+    }
+
+    @Test
     void shouldReturnAtLeastOneMobileAppPerFilterPropertyWhenAMobileAppMatch() {
         List<MobileApp> mobileAppsInDB = dataSource.getMobileApps();
         String aNameOfAMobileAppInDB = mobileAppsInDB.get(0).getName();

@@ -51,6 +51,12 @@ public class MobileAppService {
                 return true;
             }
         }
+
+        if (!Objects.isNull(filter.getMinimumDownloads())) {
+            if (mobileApp.getTotalDownloads() >= filter.getMinimumDownloads()) {
+                return true;
+            }
+        }
         return false;
     }
 }

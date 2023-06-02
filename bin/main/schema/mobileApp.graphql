@@ -1,8 +1,12 @@
 type MobileApp {
+    appId: ID!
     name: String!
     version: String
     platform: [String]
     author: Author
+    releaseDate: Date
+    totalDownloads: NonNegativeInt
+    url: Url
 }
 
 input MobileAppFilter {
@@ -10,6 +14,8 @@ input MobileAppFilter {
     version: String
     platform: String
     author: AuthorFilter
+    releasedAfter: Date
+    minimumDownloads: NonNegativeInt
 }
 
 input AuthorFilter {
