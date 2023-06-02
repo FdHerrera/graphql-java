@@ -63,6 +63,12 @@ public class MobileAppService {
                 return true;
             }
         }
+
+        if (!Objects.isNull(filter.getCategory())) {
+            if (mobileApp.getCategory().equals(filter.getCategory())) {
+                return true;
+            }
+        }
         return false;
     }
 }

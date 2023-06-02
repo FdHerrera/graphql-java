@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import com.fdherrera.graphqldemo.generated.types.MobileApp;
+import com.fdherrera.graphqldemo.generated.types.MobileAppCategory;
+
 import jakarta.annotation.PostConstruct;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,6 +56,7 @@ public class FakeMobileAppDataSource extends CommonFakeSource {
             .releaseDate(LocalDate.now().minusDays(ThreadLocalRandom.current().nextInt(365)))
             .url(url)
             .totalDownloads(faker.number().numberBetween(0, 100_000_000))
+            .category(MobileAppCategory.values()[faker.number().numberBetween(0, 3)])
             .build();
     }
 
