@@ -57,6 +57,12 @@ public class MobileAppService {
                 return true;
             }
         }
+
+        if (!Objects.isNull(filter.getReleasedAfter())) {
+            if (mobileApp.getReleaseDate().isAfter(filter.getReleasedAfter()) || mobileApp.getReleaseDate().isEqual(filter.getReleasedAfter())) {
+                return true;
+            }
+        }
         return false;
     }
 }
