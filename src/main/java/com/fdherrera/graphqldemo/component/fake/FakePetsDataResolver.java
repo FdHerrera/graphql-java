@@ -12,6 +12,8 @@ import com.netflix.graphql.dgs.InputArgument;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.AllArgsConstructor;
 
 @DgsComponent
@@ -24,7 +26,10 @@ public class FakePetsDataResolver {
         if (Objects.isNull(petFilter)) {
             return dataSource.getPets();
         }
-        return null;
+        return dataSource.getPets()
+            .stream()
+            .filter(pet -> StringUtils.containsIgnoreCase(pet.getClass().getSimpleName(), petFilter.getPetType()))
+            .toList();
     }
 
 }
